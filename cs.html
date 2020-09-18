@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    * {
+      padding-left: 0;
+      margin: 0;
+      list-style-type: none;
+    }
+
+    ul {
+      padding-left: 30px;
+    }
+
+    li {
+      cursor: pointer;
+    }
+
+    img {
+      vertical-align: middle;
+      padding: 0px 4px 4px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    var tree = [
+      {
+        id: 1,
+        label: "1级目录1",
+        children: [
+          {
+            id: "1-1",
+            label: "1.1目录"
+          },
+          {
+            id: "1-2",
+            label: "1.2目录"
+          },
+          {
+            id: "1-3",
+            label: "1.3目录",
+            children: [
+              {
+                id: "1-3-1",
+                label: "1.3.1目录",
+                children: [
+                  {
+                    id: "1-3-1-1",
+                    label: "1.3.1.1目录"
+                  },
+                  {
+                    id: "1-3-1-2",
+                    label: "1.3.1.2目录"
+                  },
+                ]
+              },
+              {
+                id: "1-3-2",
+                label: "1.3.2目录"
+              },
+            ]
+          },
+        ]
+      },
+      {
+        id: 2,
+        label: "1级目录2",
+      },
+      {
+        id: 3,
+        label: "1级目录3",
+        children: [
+          {
+            id: "3-1",
+            label: "3.1目录"
+          },
+          {
+            id: "3-2",
+            label: "3.2目录",
+            children: [
+              {
+                id: "3-2-1",
+                label: "3.2.1目录"
+              },
+              {
+                id: "3-2-2",
+                label: "3.2.2目录"
+              },
+              {
+                id: "3-2-3",
+                label: "3.2.3目录"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 4,
+        label: "1级目录4",
+        children: [
+          {
+            id: "4-1",
+            label: "4.1目录"
+          },
+          {
+            id: "4-2",
+            label: "4.2目录",
+            children: [
+              {
+                id: "4-2-1",
+                label: "4.2.1目录"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 5,
+        label: "1级目录5",
+        children: [
+          {
+            id: "5-1",
+            label: "5.1目录",
+            children: [
+              {
+                id: "5-1-1",
+                label: "5.1.1目录"
+              },
+              {
+                id: "5-1-2",
+                label: "5.1.2目录",
+
+                children: [
+                  {
+                    id: "5-1-2-1",
+                    label: "5.1.2.1目录"
+                  },
+                ]
+              }
+            ]
+          },
+          {
+            id: "5-2",
+            label: "5.2目录"
+          }
+        ]
+      },
+    ];
+
+    var render = function (tree, show, callback) {
+      var show = show || 0;
+      if (!tree) return null
+      var ul = document.createElement('ul');
+
+      for (var i = 0; i < tree.length; i++) {
+        (function (i) {
+          var li = document.createElement('li')
+          // 创建img标签
+          var img = document.createElement('img');
+          // 判断是否有子节点信息
+          if (tree[i].children) {
+            li.appendChild(img);
+          } else {
+            li.style.paddingLeft = '28px';
+          }
+
+          // 创建span标签
+          var span = document.createElement('span');
+          span.innerText = tree[i].label;
+          li.appendChild(span);
+
+          // 判断是否有子节点信息
+          if (tree[i].children) {
+            var sub = render(tree[i].children, show, callback);
+            li.appendChild(sub);
+          }
+
+          // 0隐藏 1显示
+          let nodename = li.lastChild.tagName
+          if (!show) {
+            img.src = "img/wjjg.png"
+            img.setAttribute('tabes', 'hide')
+            if (nodename == "UL") {
+              li.lastChild.style.display = "none"
+            }
+          } else {
+            img.src = "img/wjjk.png"
+            img.setAttribute('tabes', 'show')
+            if (nodename == "UL") {
+              li.lastChild.style.display = "block"
+            }
+          }
+          ul.appendChild(li);
+
+          // 点击获取信息
+          span.addEventListener('click', function (event) {
+            // 回调函数
+            callback(tree[i])
+            // 阻止事件冒泡
+            event.stopPropagation();
+          }, false)
+
+          // 点击展开或闭合子信息
+          img.addEventListener('click', function () {
+            var imgtabs = this.getAttribute('tabes')
+            if (imgtabs == 'show') {
+              this.setAttribute('tabes', "hide")
+              this.src = "img/wjjg.png"
+              li.lastChild.style.display = "none"
+            } else {
+              this.setAttribute('tabes', "show")
+              this.src = "img/wjjk.png"
+              li.lastChild.style.display = "block"
+            }
+
+          }, false)
+        })(i)
+      }
+      return ul
+    };
+
+    // 添加数据到页面
+    document.body.appendChild(render(tree, 0, function (item) {
+      console.log(item)
+    }));
+  </script>
+</body>
+
+</html>

@@ -30,7 +30,7 @@
 
 <body>
   <script>
-    var tree = [
+    let tree = [
       {
         id: 1,
         label: "1级目录1",
@@ -154,74 +154,73 @@
       },
     ];
 
-    var render = function (tree, show, callback) {
-      var show = show || 0;
+    let render = function (tree, shows, callback) {
+      let show = shows || 0;
       if (!tree) return null
-      var ul = document.createElement('ul');
+      let ul = document.createElement('ul');
 
-      for (var i = 0; i < tree.length; i++) {
-        (function (i) {
-          var li = document.createElement('li')
-          // 创建img标签
-          var img = document.createElement('img');
-          // 判断是否有子节点信息
-          if (tree[i].children) {
-            li.appendChild(img);
-          } else {
-            li.style.paddingLeft = '28px';
+      for (let i = 0; i < tree.length; i++) {
+        let li = document.createElement('li')
+        // 创建img标签
+        let img = document.createElement('img');
+        // 判断是否有子节点信息
+        if (tree[i].children) {
+          li.appendChild(img);
+        } else {
+          li.style.paddingLeft = '28px';
+        }
+
+        // 创建span标签
+        let span = document.createElement('span');
+        span.innerText = tree[i].label;
+        li.appendChild(span);
+
+        // 判断是否有子节点信息
+        if (tree[i].children) {
+          let sub = render(tree[i].children, show, callback);
+          li.appendChild(sub);
+        }
+
+        // 0隐藏 1显示
+        let nodename = li.lastChild.tagName
+        if (!show) {
+          img.src = "img/wjjg.png"
+          img.setAttribute('tabes', 'hide')
+          if (nodename == "UL") {
+            li.lastChild.style.display = "none"
           }
-
-          // 创建span标签
-          var span = document.createElement('span');
-          span.innerText = tree[i].label;
-          li.appendChild(span);
-
-          // 判断是否有子节点信息
-          if (tree[i].children) {
-            var sub = render(tree[i].children, show, callback);
-            li.appendChild(sub);
+        } else {
+          img.src = "img/wjjk.png"
+          img.setAttribute('tabes', 'show')
+          if (nodename == "UL") {
+            li.lastChild.style.display = "block"
           }
+        }
+        ul.appendChild(li);
 
-          // 0隐藏 1显示
-          let nodename = li.lastChild.tagName
-          if (!show) {
+        // 点击获取信息
+        span.addEventListener('click', function (event) {
+          // 回调函数
+          callback(tree[i])
+          // 阻止事件冒泡
+          event.stopPropagation();
+        }, false)
+
+        // 点击展开或闭合子信息
+        img.addEventListener('click', function () {
+          let imgtabs = this.getAttribute('tabes')
+          if (imgtabs == 'show') {
+            img.setAttribute('tabes', "hide")
             img.src = "img/wjjg.png"
-            img.setAttribute('tabes', 'hide')
-            if (nodename == "UL") {
-              li.lastChild.style.display = "none"
-            }
+            li.lastChild.style.display = "none"
           } else {
+            img.setAttribute('tabes', "show")
             img.src = "img/wjjk.png"
-            img.setAttribute('tabes', 'show')
-            if (nodename == "UL") {
-              li.lastChild.style.display = "block"
-            }
+            li.lastChild.style.display = "block"
           }
-          ul.appendChild(li);
-
-          // 点击获取信息
-          span.addEventListener('click', function (event) {
-            // 回调函数
-            callback(tree[i])
-            // 阻止事件冒泡
-            event.stopPropagation();
-          }, false)
-
-          // 点击展开或闭合子信息
-          img.addEventListener('click', function () {
-            var imgtabs = this.getAttribute('tabes')
-            if (imgtabs == 'show') {
-              this.setAttribute('tabes', "hide")
-              this.src = "img/wjjg.png"
-              li.lastChild.style.display = "none"
-            } else {
-              this.setAttribute('tabes', "show")
-              this.src = "img/wjjk.png"
-              li.lastChild.style.display = "block"
-            }
-
-          }, false)
-        })(i)
+          // 阻止事件冒泡
+          event.stopPropagation();
+        }, false)
       }
       return ul
     };
